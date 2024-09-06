@@ -1,7 +1,15 @@
 public enum ContentPanelState {
 
-    ALL_TASKS, CALENDAR, TODAY;
+    ALL_TASKS, TODAY;
 
-    public static ContentPanelState currentState = ContentPanelState.ALL_TASKS;
+    private static ContentPanelState currentState = ContentPanelState.ALL_TASKS;
+
+    public static ContentPanelState getCurrentState() {
+        return currentState;
+    }
+
+    public static void setCurrentState(ContentPanelState newState) {
+        currentState = newState;
+    }
 
 }

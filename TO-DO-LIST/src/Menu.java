@@ -18,7 +18,7 @@ public class Menu extends JPanel {
     protected static JMenu profileMenu = null;
 
     protected JButton addTaskButton;
-    protected JButton calendarButton;
+    protected JButton allTasksButton;
     protected JButton todayButton;
 
 
@@ -42,7 +42,7 @@ public class Menu extends JPanel {
         this.add(Box.createVerticalStrut(10));
 
 
-        setCalendarButton();
+        setAllTasksButton();
 
 
         this.add(Box.createVerticalStrut(10));
@@ -83,7 +83,7 @@ public class Menu extends JPanel {
         changeUsername.addActionListener(new ProfileMenuListener());
 
         JMenuItem exitApp = new JMenuItem("Exit");
-        exitApp.addActionListener(e -> System.exit(0));
+        exitApp.addActionListener(new ProfileMenuListener());
 
 
         profileMenu.add(changeAvatar);
@@ -156,6 +156,7 @@ public class Menu extends JPanel {
                     int result = JOptionPane.showConfirmDialog(null, dialogPanel, "Add Task", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
                     if (result == JOptionPane.OK_OPTION) {
+
                         String taskString = taskTextArea.getText();
                         Date taskDate = (Date) datePicker.getModel().getValue();
 
@@ -167,6 +168,7 @@ public class Menu extends JPanel {
                             SwingApp.taskLog.addTask(new Task(taskString, taskDate));
                             ContentPanel.getInstance().refreshTasks();
                         }
+
                     } else {
                         break;
                     }
@@ -181,24 +183,25 @@ public class Menu extends JPanel {
     }
 
 
-    private void setCalendarButton() {
+    private void setAllTasksButton() {
 
-        calendarButton = new JButton();
+        allTasksButton = new JButton();
 
-        setProperties(calendarButton, "Calendar", Color.WHITE, Color.BLACK, "././Assets/calendar.png");
+        setProperties(allTasksButton, "All Tasks", Color.WHITE, Color.BLACK, "././Assets/calendar.png");
 
-        calendarButton.setIconTextGap(10);
+        allTasksButton.setIconTextGap(10);
 
-        calendarButton.setMargin(new Insets(0, 20, 0, 5));
+        allTasksButton.setMargin(new Insets(0, 20, 0, 5));
 
-        calendarButton.addActionListener(new ActionListener() {
+        allTasksButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                ContentPanelState.setCurrentState(ContentPanelState.ALL_TASKS);
+                ContentPanel.getInstance().refreshTasks();
             }
         });
 
-        this.add(calendarButton);
+        this.add(allTasksButton);
 
     }
 
@@ -215,7 +218,8 @@ public class Menu extends JPanel {
         todayButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                ContentPanelState.setCurrentState(ContentPanelState.TODAY);
+                ContentPanel.getInstance().refreshTasks();
             }
         });
 

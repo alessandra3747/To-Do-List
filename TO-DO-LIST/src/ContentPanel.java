@@ -2,7 +2,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.stream.Stream;
 
 public class ContentPanel extends JPanel {
 
@@ -52,15 +56,49 @@ public class ContentPanel extends JPanel {
 
         TaskLog.getInstance().sortTasks();
 
-        for( Task t : TaskLog.getInstance() ) {
+        switch(ContentPanelState.getCurrentState()) {
+            case ContentPanelState.ALL_TASKS:
+                showAllTasks();
+                break;
+
+            case ContentPanelState.TODAY:
+                showTodaysTasks();
+                break;
+
+        }
+
+        this.revalidate();
+        this.repaint();
+
+    }
+
+
+    private void showTodaysTasks() {
+
+        TaskLog.getInstance().stream()
+                .filter(task -> {
+                    LocalDate taskDate = task.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate today = LocalDate.now();
+                    return taskDate.equals(today);
+                })
+                .forEach(t -> {
+                    this.add(new JSeparator(SwingConstants.HORIZONTAL));
+                    t.setMaximumSize(new Dimension(Integer.MAX_VALUE, t.getPreferredSize().height));
+                    this.add(t);
+                    this.add(Box.createVerticalStrut(10));
+                });
+
+    }
+
+
+    private void showAllTasks() {
+
+        for (Task t : TaskLog.getInstance()) {
             this.add(new JSeparator(SwingConstants.HORIZONTAL));
             t.setMaximumSize(new Dimension(Integer.MAX_VALUE, t.getPreferredSize().height));
             this.add(t);
             this.add(Box.createVerticalStrut(10));
         }
-
-        this.revalidate();
-        this.repaint();
 
     }
 

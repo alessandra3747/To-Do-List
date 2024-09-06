@@ -2,12 +2,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class TaskLog implements Iterable<Task> {
 
     private static TaskLog taskLogInstance = null;
 
-    private ArrayList<Task> taskLog;
+    private final ArrayList<Task> taskLog;
 
 
     public static TaskLog getInstance() {
@@ -54,27 +55,43 @@ public class TaskLog implements Iterable<Task> {
     public Iterator<Task> iterator() {
 
         return new Iterator<>() {
+
             int counter = 0;
+
 
             @Override
             public boolean hasNext() {
+
                 return counter < taskLog.size();
+
             }
 
             @Override
             public Task next() {
+
                 if(!hasNext())
                     throw new NoSuchElementException();
 
                 return taskLog.get(counter++);
+
             }
+
         };
 
     }
 
     @Override
     public void forEach(Consumer<? super Task> action) {
+
         Iterable.super.forEach(action);
+
+    }
+
+
+    public Stream<Task> stream() {
+
+        return taskLog.stream();
+
     }
 
 

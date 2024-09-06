@@ -1,16 +1,16 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
-public class Task extends JPanel {
+public class Task extends JPanel implements Serializable {
 
     private static int counter = 1;
 
-    private JLabel textLabel;
+    private final JLabel textLabel;
     private final int id;
-    private JCheckBox isDoneCheckBox;
+    private final JCheckBox isDoneCheckBox;
     private Date date;
 
     public Task(String text, Date date) {
@@ -32,29 +32,16 @@ public class Task extends JPanel {
         this.isDoneCheckBox.addActionListener(e -> ContentPanel.getInstance().refreshTasks());
 
 
-        ImageIcon icon = new ImageIcon("././Assets/Xpic.jpg");
-        JButton deleteTask = new JButton(icon);
-        deleteTask.setOpaque(false);
-        deleteTask.setContentAreaFilled(false);
-        deleteTask.setBorderPainted(false);
-        deleteTask.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
+        JButton deleteTask = getDeleteButton();
 
-        deleteTask.addActionListener(e -> {
-            try {
-                TaskLog.getInstance().removeTaskById(this.id);
-            } catch (NoTaskFoundException ex) {
-                throw new RuntimeException(ex);
-            }
-            finally {
-                ContentPanel.getInstance().refreshTasks();
-            }
-        });
-
+        JLabel formattedDateLabel = getFormattedDateLabel();
 
         JPanel rightPanel = new JPanel();
         rightPanel.setOpaque(false);
         rightPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
 
+
+        rightPanel.add(formattedDateLabel);
         rightPanel.add(isDoneCheckBox);
         rightPanel.add(deleteTask);
 
@@ -89,6 +76,73 @@ public class Task extends JPanel {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+
+
+    private JButton getDeleteButton() {
+
+        ImageIcon icon = new ImageIcon("././Assets/Xpic.jpg");
+
+        JButton deleteButton = new JButton(icon);
+
+        deleteButton.setOpaque(false);
+
+        deleteButton.setContentAreaFilled(false);
+
+        deleteButton.setBorderPainted(false);
+
+        deleteButton.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
+
+        deleteButton.addActionListener(e -> {
+            try {
+                TaskLog.getInstance().removeTaskById(this.id);
+            } catch (NoTaskFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+            finally {
+                ContentPanel.getInstance().refreshTasks();
+            }
+        });
+
+        return deleteButton;
+    }
+
+
+
+    private JLabel getFormattedDateLabel() {
+
+        DateLabelFormatter formatter = new DateLabelFormatter();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(this.date);
+
+        String formattedDate = formatter.valueToString(calendar);
+
+        JLabel formattedDateLabel = new JLabel(formattedDate);
+
+        if(isTaskBeforeToday(this))
+            formattedDateLabel.setForeground(Color.RED);
+
+        return formattedDateLabel;
+
+    }
+
+
+    public static Date getDateWithoutTime(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+
+    public boolean isTaskBeforeToday(Task task) {
+        Date todayWithoutTime = getDateWithoutTime(new Date());
+        Date taskDateWithoutTime = getDateWithoutTime(task.getDate());
+        return taskDateWithoutTime.before(todayWithoutTime);
     }
 
 }

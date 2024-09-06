@@ -51,6 +51,8 @@ public class SwingApp extends JFrame {
 
         this.setVisible( true );
 
+        ContentPanelState.setCurrentState(ContentPanelState.ALL_TASKS);
+
     }
 
     protected static void setUsername() {

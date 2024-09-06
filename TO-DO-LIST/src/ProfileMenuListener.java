@@ -55,6 +55,23 @@ public class ProfileMenuListener implements ActionListener {
 
                 break;
 
+            case "Exit":
+
+                try ( ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("././Assets/TaskSave")) ) {
+
+                    out.writeObject(TaskLog.getInstance());
+
+                } catch (Exception exception) {
+
+                    System.out.println("TaskSave-problem with saving");
+                    exception.printStackTrace();
+
+                }
+
+                System.exit(0);
+
+                break;
+
         }
 
     }
