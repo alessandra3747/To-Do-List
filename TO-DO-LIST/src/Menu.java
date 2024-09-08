@@ -165,7 +165,7 @@ public class Menu extends JPanel {
                         } else {
                             validInput = true;
 
-                            SwingApp.taskLog.addTask(new Task(taskString, taskDate));
+                            SwingApp.currentUser.getTaskLog().addTask(new Task(taskString, taskDate));
                             ContentPanel.getInstance().refreshTasks();
                         }
 
@@ -198,11 +198,11 @@ public class Menu extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 ContentPanelState.setCurrentState(ContentPanelState.ALL_TASKS);
                 ContentPanel.getInstance().refreshTasks();
+                ContentPanel.getInstance().refreshTitle("YOUR TASKS");
             }
         });
 
         this.add(allTasksButton);
-
     }
 
 
@@ -224,6 +224,7 @@ public class Menu extends JPanel {
         });
 
         this.add(todayButton);
+
     }
 
 
@@ -258,7 +259,7 @@ public class Menu extends JPanel {
     }
 
     protected static void updateProfileUsername() {
-        profileMenu.setText(SwingApp.username + "'s Profile");
+        profileMenu.setText(SwingApp.currentUser.getLogin() + "'s Profile");
     }
 
 }

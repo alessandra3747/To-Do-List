@@ -1,28 +1,52 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class TaskLog implements Iterable<Task> {
+public class TaskLog implements Iterable<Task>, Serializable {
 
-    private static TaskLog taskLogInstance = null;
+    //private static TaskLog taskLogInstance = null;
 
-    private final ArrayList<Task> taskLog;
+    private ArrayList<Task> taskLog;
 
 
-    public static TaskLog getInstance() {
+   /* public static TaskLog getInstance() {
 
         if (taskLogInstance == null)
             taskLogInstance = new TaskLog();
 
         return taskLogInstance;
 
-    }
+    }*/
 
-    private TaskLog(){
+    public TaskLog(){
        this.taskLog = new ArrayList<>();
     }
+
+
+   /* public static void saveTaskArray(){
+
+        try ( ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("././Assets/TaskSave")) ) {
+
+            out.writeObject(TaskLog.getInstance().taskLog);
+
+        } catch (Exception exception) {
+
+            System.out.println("TaskSave-problem with saving");
+            exception.printStackTrace();
+
+        }
+
+    }*/
+
+
+   /* public static void uploadTaskArray(ArrayList<Task> taskArray){
+
+        TaskLog.getInstance().taskLog = taskArray;
+
+    }*/
 
 
 
@@ -48,6 +72,12 @@ public class TaskLog implements Iterable<Task> {
 
     public void sortTasks(){
         this.taskLog.sort(new TaskComparator());
+    }
+
+    public void setTasksProperties(){
+        for(Task task : taskLog){
+            task.addTaskListeners();
+        }
     }
 
 

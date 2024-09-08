@@ -9,6 +9,16 @@ public enum ContentPanelState {
     }
 
     public static void setCurrentState(ContentPanelState newState) {
+
+        switch (newState) {
+            case ALL_TASKS:
+                ContentPanel.getInstance().refreshTitle("YOUR TASKS");
+                break;
+            case TODAY:
+                ContentPanel.getInstance().refreshTitle("YOUR TASKS TODAY");
+                break;
+        }
+
         currentState = newState;
     }
 

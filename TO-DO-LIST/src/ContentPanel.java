@@ -12,6 +12,8 @@ public class ContentPanel extends JPanel {
 
     private static ContentPanel contentPanelInstance = null;
 
+    protected static JLabel mainTaskLabel = new JLabel("YOUR TASKS");
+
 
     public static ContentPanel getInstance() {
 
@@ -35,7 +37,6 @@ public class ContentPanel extends JPanel {
 
         this.setBorder(BorderFactory.createEmptyBorder(5, 35, 5, 35));
 
-        JLabel mainTaskLabel = new JLabel("YOUR TASKS");
         mainTaskLabel.setFont(new Font("Monospaced", Font.BOLD, 24));
         mainTaskLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.add(mainTaskLabel);
@@ -54,7 +55,8 @@ public class ContentPanel extends JPanel {
 
         this.setContentPanel();
 
-        TaskLog.getInstance().sortTasks();
+        SwingApp.currentUser.getTaskLog().sortTasks();
+
 
         switch(ContentPanelState.getCurrentState()) {
             case ContentPanelState.ALL_TASKS:
@@ -73,9 +75,17 @@ public class ContentPanel extends JPanel {
     }
 
 
+    public void refreshTitle(String newTitle){
+        mainTaskLabel.setText(newTitle);
+
+        this.revalidate();
+        this.repaint();
+    }
+
+
     private void showTodaysTasks() {
 
-        TaskLog.getInstance().stream()
+        SwingApp.currentUser.getTaskLog().stream()
                 .filter(task -> {
                     LocalDate taskDate = task.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                     LocalDate today = LocalDate.now();
@@ -93,12 +103,16 @@ public class ContentPanel extends JPanel {
 
     private void showAllTasks() {
 
-        for (Task t : TaskLog.getInstance()) {
+        for (Task t : SwingApp.currentUser.getTaskLog()) {
             this.add(new JSeparator(SwingConstants.HORIZONTAL));
             t.setMaximumSize(new Dimension(Integer.MAX_VALUE, t.getPreferredSize().height));
             this.add(t);
             this.add(Box.createVerticalStrut(10));
         }
+
+        mainTaskLabel = new JLabel("YOUR TASKS");
+        this.revalidate();
+        this.repaint();
 
     }
 

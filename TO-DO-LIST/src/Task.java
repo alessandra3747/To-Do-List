@@ -11,6 +11,7 @@ public class Task extends JPanel implements Serializable {
     private final JLabel textLabel;
     private final int id;
     private final JCheckBox isDoneCheckBox;
+    private final JButton deleteTaskButton;
     private Date date;
 
     public Task(String text, Date date) {
@@ -32,7 +33,7 @@ public class Task extends JPanel implements Serializable {
         this.isDoneCheckBox.addActionListener(e -> ContentPanel.getInstance().refreshTasks());
 
 
-        JButton deleteTask = getDeleteButton();
+        deleteTaskButton = getDeleteButton();
 
         JLabel formattedDateLabel = getFormattedDateLabel();
 
@@ -43,7 +44,7 @@ public class Task extends JPanel implements Serializable {
 
         rightPanel.add(formattedDateLabel);
         rightPanel.add(isDoneCheckBox);
-        rightPanel.add(deleteTask);
+        rightPanel.add(deleteTaskButton);
 
 
         this.add(textLabel, BorderLayout.WEST);
@@ -96,7 +97,7 @@ public class Task extends JPanel implements Serializable {
 
         deleteButton.addActionListener(e -> {
             try {
-                TaskLog.getInstance().removeTaskById(this.id);
+                SwingApp.currentUser.getTaskLog().removeTaskById(this.id);
             } catch (NoTaskFoundException ex) {
                 throw new RuntimeException(ex);
             }
@@ -143,6 +144,22 @@ public class Task extends JPanel implements Serializable {
         Date todayWithoutTime = getDateWithoutTime(new Date());
         Date taskDateWithoutTime = getDateWithoutTime(task.getDate());
         return taskDateWithoutTime.before(todayWithoutTime);
+    }
+
+    protected void addTaskListeners(){
+
+        this.isDoneCheckBox.addActionListener(e -> ContentPanel.getInstance().refreshTasks());
+
+        this.deleteTaskButton.addActionListener(e -> {
+            try {
+                SwingApp.currentUser.getTaskLog().removeTaskById(this.id);
+            } catch (NoTaskFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+            finally {
+                ContentPanel.getInstance().refreshTasks();
+            }
+        });
     }
 
 }
